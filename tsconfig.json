@@ -4,7 +4,7 @@
     "module": "CommonJS",
     "declaration": true,
     "outDir": "./dist",
-    "lib": [ "es2015" ],
+    "lib": [ "es2015", "DOM" ],
     "strict": true
   },
   "include": [
