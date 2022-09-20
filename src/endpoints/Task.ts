@@ -1,4 +1,5 @@
 import { Client, Request } from "@henrotaym/api-client";
+import { TryGettingApiResponse } from "@henrotaym/api-client/dist/responses";
 import { TaskCredential } from "../credentials";
 import {
   StoredTaskContract,
@@ -9,15 +10,14 @@ import {
 } from "../types";
 
 class Task {
-  client = new Client(new TaskCredential());
+  private client = new Client(new TaskCredential());
 
   public async index(options: TaskEndpointIndexOptionsContract) {
     const request = new Request<Array<StoredTaskContract>>()
       .setVerb("GET")
       .setUrl("tasks")
       .addQuery({ ...options, model_id: `${options.model_id}` });
-    const response = await this.client.try(request);
-    return response.failed() ? null : response.get();
+    return this.parseResponse(await this.client.try(request));
   }
 
   public async store(options: TaskEndpointStoreOptionsContract) {
@@ -25,8 +25,7 @@ class Task {
       .setVerb("POST")
       .setUrl("tasks")
       .addData(options);
-    const response = await this.client.try(request);
-    return response.failed() ? null : response.get();
+    return this.parseResponse(await this.client.try(request));
   }
 
   public async update(options: TaskEndpointUpdateOptionsContract) {
@@ -35,8 +34,7 @@ class Task {
       .setUrl(`tasks/${options.task.uuid}`)
       .addData(options);
     this.client.try(request);
-    const response = await this.client.try(request);
-    return response.failed() ? null : response.get();
+    return this.parseResponse(await this.client.try(request));
   }
 
   public async destroy(options: TaskEndpointDestroyOptionsContract) {
@@ -44,8 +42,16 @@ class Task {
       .setVerb("DELETE")
       .setUrl(`tasks/${options.uuid}`);
     this.client.try(request);
-    const response = await this.client.try(request);
-    return response.failed() ? null : response.get();
+    return this.parseResponse(await this.client.try(request));
+  }
+
+  private parseResponse<R>(response: TryGettingApiResponse<R>) {
+    if (response.failed()) {
+      console.error(response.getException().context());
+      return null;
+    }
+
+    return response.get();
   }
 }
 
