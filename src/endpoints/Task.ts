@@ -15,7 +15,7 @@ class Task {
   public async index(options: TaskEndpointIndexOptionsContract) {
     const request = new Request<Array<StoredTaskContract>>()
       .setVerb("GET")
-      .setUrl("tasks")
+      .setUrl("/")
       .addQuery({ ...options, model_id: `${options.model_id}` });
     return this.parseResponse(await this.client.try(request));
   }
@@ -23,7 +23,7 @@ class Task {
   public async store(options: TaskEndpointStoreOptionsContract) {
     const request = new Request<StoredTaskContract>()
       .setVerb("POST")
-      .setUrl("tasks")
+      .setUrl("/")
       .addData(options);
     return this.parseResponse(await this.client.try(request));
   }
@@ -31,7 +31,7 @@ class Task {
   public async update(options: TaskEndpointUpdateOptionsContract) {
     const request = new Request<StoredTaskContract>()
       .setVerb("PUT")
-      .setUrl(`tasks/${options.task.uuid}`)
+      .setUrl(`${options.task.uuid}`)
       .addData(options);
     this.client.try(request);
     return this.parseResponse(await this.client.try(request));
@@ -40,7 +40,7 @@ class Task {
   public async destroy(options: TaskEndpointDestroyOptionsContract) {
     const request = new Request<StoredTaskContract>()
       .setVerb("DELETE")
-      .setUrl(`tasks/${options.uuid}`);
+      .setUrl(`${options.uuid}`);
     this.client.try(request);
     return this.parseResponse(await this.client.try(request));
   }
