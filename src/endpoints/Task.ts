@@ -7,13 +7,14 @@ import {
   TaskEndpointIndexOptionsContract,
   TaskEndpointStoreOptionsContract,
   TaskEndpointUpdateOptionsContract,
+  ObjectPropType,
 } from "../types";
 
 class Task {
   private client = new Client(new TaskCredential());
 
   public async index(options: TaskEndpointIndexOptionsContract) {
-    const request = new Request<Array<StoredTaskContract>>()
+    const request = new Request<{ data: Array<StoredTaskContract> }>()
       .setVerb("GET")
       .setUrl("/")
       .addQuery({ ...options, model_id: `${options.model_id}` });
@@ -21,7 +22,7 @@ class Task {
   }
 
   public async store(options: TaskEndpointStoreOptionsContract) {
-    const request = new Request<StoredTaskContract>()
+    const request = new Request<{ data: StoredTaskContract }>()
       .setVerb("POST")
       .setUrl("/")
       .addData(options);
@@ -29,7 +30,7 @@ class Task {
   }
 
   public async update(options: TaskEndpointUpdateOptionsContract) {
-    const request = new Request<StoredTaskContract>()
+    const request = new Request<{ data: StoredTaskContract }>()
       .setVerb("PUT")
       .setUrl(`${options.task.uuid}`)
       .addData(options);
@@ -38,20 +39,23 @@ class Task {
   }
 
   public async destroy(options: TaskEndpointDestroyOptionsContract) {
-    const request = new Request<StoredTaskContract>()
+    const request = new Request<{ data: StoredTaskContract }>()
       .setVerb("DELETE")
       .setUrl(`${options.uuid}`);
     this.client.try(request);
     return this.parseResponse(await this.client.try(request));
   }
 
-  private parseResponse<R>(response: TryGettingApiResponse<R>) {
+  private parseResponse<
+    R extends { data: any },
+    V extends ObjectPropType<R, "data">
+  >(response: TryGettingApiResponse<R>): V | null {
     if (response.failed()) {
       console.error(response.getException().context());
       return null;
     }
 
-    return response.get();
+    return response.get()?.data || null;
   }
 }
 
