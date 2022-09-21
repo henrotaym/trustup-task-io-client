@@ -3,6 +3,7 @@ import ApiRequest from "@henrotaym/api-client/dist/Request";
 
 class Task extends JsonCredential {
   prepare(request: ApiRequest<any>): void {
+    super.prepare(request);
     request
       .setBaseUrl(`${process.env.MIX_TRUSTUP_TASK_IO_URL}/api/tasks`)
       .addHeaders({ Accept: "application/json" });
