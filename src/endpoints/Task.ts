@@ -34,7 +34,6 @@ class Task {
       .setVerb("PUT")
       .setUrl(`${options.task.uuid}`)
       .addData(options);
-    this.client.try(request);
     return this.parseResponse(await this.client.try(request));
   }
 
@@ -42,7 +41,6 @@ class Task {
     const request = new Request<{ data: StoredTaskContract }>()
       .setVerb("DELETE")
       .setUrl(`${options.uuid}`);
-    this.client.try(request);
     return this.parseResponse(await this.client.try(request));
   }
 
