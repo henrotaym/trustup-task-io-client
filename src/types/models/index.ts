@@ -22,4 +22,13 @@ export interface UserContract {
 export type StoredTaskContract = StorableTaskContract & {
   uuid: string;
   id: number;
+  messaging_trustup_io: MessagingIoOptionsContract;
+};
+
+export type MessagingIoOptionsContract = {
+  "app-key": string;
+  "model-id": string;
+  "model-type": string;
+  "user-id"?: number;
+  api: string;
 };
